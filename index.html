@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foodpanda</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center">
+   
+    <!-- Logo -->
+    <div class="flex items-center space-x-2">
+      <img src="logo.jpg" alt="Foodpanda Logo" class="h-8">
+    </div>
+
+     <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" class="sm:hidden text-pink-600 focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+
+    <!-- Navigation Buttons -->
+     <div id="menu" class="hidden sm:flex flex-col sm:flex-row items-center sm:space-x-4 space-y-3 sm:space-y-0 absolute sm:static top-16 left-0 w-full sm:w-auto bg-white sm:bg-transparent shadow sm:shadow-none px-4 sm:px-0 py-3 sm:py-0">
+
+      <!-- Log In / Sign Up Buttons -->
+      <button onclick="toggleModal('loginModal')" class="bg-white text-pink-600 px-4 py-2 border border-pink-600 rounded hover:bg-pink-50 w-full sm:w-auto">Log In</button>
+      <button onclick="toggleModal('signupModal')" class="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 w-full sm:w-auto">Sign Up for Free Delivery</button>
+
+      <!-- Language Dropdown -->
+      <div class="w-35sm:w-35 md:w-auto">
+  <select class="bg-white text-pink-600 px-4 py-2 border border-pink-600 rounded hover:bg-pink-50 w-full sm:w-auto">
+          <option>English</option>
+          <option>Urdu</option>
+          <option>Arabic</option>
+          <option>Persian</option>
+          <option>Chinese</option>
+          <option>Hindi</option>
+        </select>
+      </div>
+
+
+     <!-- Cart Button with Dropdown -->
+      <div class="relative w-full sm:w-auto">
+        <button onclick="toggleCartDropdown()" class="relative border border-gray-300 px-4 py-2 rounded text-gray-700 flex items-center justify-center sm:justify-start hover:bg-pink-50 transition w-full sm:w-auto">
+          <svg class="w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l1 4h13l1-4h2M6 6l1 9h10l1-9M5 21h2M17 21h2" />
+          </svg>
+          <span>Cart</span>
+          <span id="cart-count" class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs font-bold px-2 py-0.5 rounded-full hidden">0</span>
+        </button>
+
+        <!-- Cart Dropdown -->
+        <div id="cart-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+          <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-semibold text-gray-800">Your Cart</h3>
+            <button onclick="clearCart()" class="text-xs text-red-500 hover:underline">Clear</button>
+          </div>
+          <div id="cart-items-list" class="max-h-60 overflow-y-auto p-3 text-sm text-gray-700">
+            <p class="text-center text-gray-500">Your cart is empty.</p>
+          </div>
+          <div class="border-t border-gray-200 p-3 space-y-2">
+            <button onclick="placeOrder()" class="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700">Place Order</button>
+            <button onclick="addLocation()" class="w-full bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200">Add Location</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+   <!-- Login Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-11/12 max-w-md relative">
+      <button onclick="toggleModal('loginModal')" class="absolute top-2 right-3 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-2xl font-bold text-pink-600 mb-4 text-center">Log In</h2>
+      <form class="space-y-4">
+        <input type="email" placeholder="Email" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="password" placeholder="Password" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <button type="submit" class="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700">Log In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-11/12 max-w-lg relative overflow-y-auto max-h-[90vh]">
+      <button onclick="toggleModal('signupModal')" class="absolute top-2 right-3 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-2xl font-bold text-pink-600 mb-4 text-center">Sign Up</h2>
+      <form class="space-y-4">
+        <input type="text" placeholder="First Name" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="text" placeholder="Last Name" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="email" placeholder="Email" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="tel" placeholder="Phone Number" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500">
+        <input type="text" placeholder="Address" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500">
+        <input type="password" placeholder="Password" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="password" placeholder="Confirm Password" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <button type="submit" class="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  
+  <!-- Hero Section -->
+  <section class="bg-gray-50 pt-24 flex flex-col-reverse md:flex-row items-center justify-between px-6 md:px-20 py-10">
+    <!-- Text -->
+    <div class="w-full md:w-1/2 text-center md:text-left">
+      <h1 class="text-3xl md:text-5xl font-bold text-gray-800 mb-6">
+        Enjoy discounts on your first order
+      </h1>
+      <div class="bg-white shadow-lg rounded-lg flex flex-col sm:flex-row items-stretch overflow-hidden max-w-lg mx-auto md:mx-0">
+        <input type="text" placeholder="Enter your address" class="flex-grow px-4 py-3 text-gray-700 outline-none" />
+        <a href="https://www.google.com/maps" class="text-center text-pink-500 px-4 py-3 font-medium hover:bg-pink-50">
+          Locate me
+        </a>
+        <button class="bg-pink-500 text-white px-6 py-3 font-semibold hover:bg-pink-600 transition">
+          Find food
+        </button>
+      </div>
+    </div>
+    <!-- Image -->
+    <div class="w-full md:w-1/2 flex justify-center md:justify-end mb-6 md:mb-0">
+      <img src="foodpanda.png" alt="Foodpanda" class="w-3/4 sm:w-2/3 md:w-full max-w-sm object-contain" />
+    </div>
+  </section>
+
+  <!-- Chef Section -->
+  <section class="mx-auto mb-20 px-4">
+    <h1 class="text-xl font-bold mb-4">You prepare the food, we handle the rest</h1>
+    <div class="relative w-full">
+      <img src="chef.png" alt="Chef" class="w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover rounded-lg" />
+      <div class="relative md:absolute md:bottom-[-40px] md:left-10 w-full md:w-2/5 bg-white shadow-lg rounded-lg p-5 md:p-6 mt-4 md:mt-0">
+        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-3">
+          List your restaurant or shop on foodpanda
+        </h2>
+        <p class="text-gray-600 mb-4 text-sm md:text-base leading-relaxed">
+          Would you like millions of new customers to enjoy your amazing food and groceries?
+          So would we! It's simple: we list your menu and product lists online, help you process
+          orders, pick them up, and deliver them to hungry pandas – in a heartbeat!<br><br>
+          Interested? Let's start our partnership today!
+        </p>
+        <button class="bg-pink-500 text-white px-6 py-2 rounded-md font-medium hover:bg-pink-600">
+          Get Started
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login & Signup Modals -->
+  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-11/12 max-w-md relative">
+      <button onclick="toggleModal('loginModal')" class="absolute top-2 right-3 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-2xl font-bold text-pink-600 mb-4 text-center">Log In</h2>
+      <form class="space-y-4">
+        <input type="email" placeholder="Email" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="password" placeholder="Password" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <button type="submit" class="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700">Log In</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-11/12 max-w-lg relative overflow-y-auto max-h-[90vh]">
+      <button onclick="toggleModal('signupModal')" class="absolute top-2 right-3 text-gray-500 text-xl">&times;</button>
+      <h2 class="text-2xl font-bold text-pink-600 mb-4 text-center">Sign Up</h2>
+      <form class="space-y-4">
+        <input type="text" placeholder="First Name" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="text" placeholder="Last Name" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="email" placeholder="Email" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="tel" placeholder="Phone Number" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500">
+        <input type="text" placeholder="Address" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500">
+        <input type="password" placeholder="Password" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <input type="password" placeholder="Confirm Password" class="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-pink-500" required>
+        <button type="submit" class="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => menu.classList.toggle('hidden'));
+
+    function toggleModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+    }
+
+    // CART COUNTER SCRIPT
+    document.addEventListener("DOMContentLoaded", function() {
+      const cartCountEl = document.getElementById("cart-count");
+      const cartCountMobile = document.getElementById("cart-count-mobile");
+      const currentCount = localStorage.getItem("cartCount") || 0;
+      if (cartCountEl) {
+        cartCountEl.textContent = currentCount;
+        cartCountEl.classList.toggle("hidden", currentCount == 0);
+      }
+      if (cartCountMobile) {
+        cartCountMobile.textContent = currentCount;
+        cartCountMobile.classList.toggle("hidden", currentCount == 0);
+      }
+    });
+  </script>
+
+  <!-- City Grid Section -->
+  <section class="max-w-6xl mx-auto px-4 mb-20">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+      Find us in these cities and many more!
+    </h2>
+
+    <!-- Grid Container -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+   
+      <!-- Islamabad -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="Islamabad.html">
+          <img src="islamabad.jpg" alt="Islamabad" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Islamabad</button>
+        </a>
+      </div>
+
+      <!-- Karachi -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="karachi.html">
+          <img src="karachi.jpg" alt="Karachi" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Karachi</button>
+        </a>
+      </div>
+
+      <!-- Lahore -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="lahore.html">
+          <img src="lahore.jpg" alt="Lahore" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Lahore</button>
+        </a>
+      </div>
+
+      <!-- Faisalabad -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="Faisalabad.html">
+          <img src="faisalabad.jpg" alt="Faisalabad" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Faisalabad</button>
+        </a>
+      </div>
+
+      <!-- Rawalpindi -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="Rawalpindi.html">
+          <img src="rawalpindi.jpg" alt="Rawalpindi" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Rawalpindi</button>
+        </a>
+      </div>
+
+      <!-- Abbottabad -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="Abbottabad.html">
+          <img src="abbottabad.jpg" alt="Abbottabad" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Abbottabad</button>
+        </a>
+      </div>
+
+      <!-- Bahawalpur -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="Bahawalpur.html">
+          <img src="bahawalpur.jpg" alt="Bahawalpur" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Bahawalpur</button>
+        </a>
+      </div>
+
+      <!-- Dera Ghazi Khan -->
+      <div class="relative rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+        <a href="Dera Ghazi Khan.html">
+          <img src="dera_ghazi_khan.jpg" alt="Dera Ghazi Khan" class="w-full h-48 sm:h-56 md:h-60 object-cover">
+          <button class="absolute bottom-3 left-3 bg-white px-3 py-1 rounded-lg shadow text-gray-900 font-semibold">Dera Ghazi Khan</button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Office Banner Section -->
+  <section class="mx-auto mb-20 px-4">
+    <h1 class="text-xl font-bold mb-4">Take your office out for lunch</h1>
+    <div class="relative w-full">
+      <img src="home-corporate-pk.jpg_width=2000&height=1280.png" alt="Office Banner" class="w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover rounded-lg">
+      <div class="relative md:absolute md:bottom-[-40px] md:left-10 bg-white shadow-lg rounded-lg p-5 md:p-6 w-full md:w-2/5 mt-4 md:mt-0">
+        <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-3">
+          foodpanda for business
+        </h2>
+        <p class="text-gray-600 mb-4 text-sm md:text-base">
+          Order lunch or fuel for work-from-home, late nights in the office, corporate events,
+          client meetings, and much more.
+        </p>
+        <button class="bg-pink-500 text-white px-6 py-2 rounded-md font-medium hover:bg-pink-600">
+          Get Started
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- App Download Section -->
+  <section class="relative w-full bg-white py-16 px-6 md:px-20 overflow-hidden mb-20">
+    <h1 class="font-bold text-lg mb-6">Put us in your pocket</h1>
+    <div class="flex flex-col md:flex-row items-start justify-between bg-pink-600 text-white rounded-2xl px-6 md:px-10 py-10 relative z-10">
+      <!-- Left Content -->
+      <div class="md:w-1/2 w-full flex flex-col justify-between h-full">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4">Download the food and groceries you love</h2>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-4">
+          <img src="qr.jpg" alt="QR Code" class="w-20 h-20 rounded-lg" />
+          <p class="text-base leading-relaxed">
+            It's all at your fingertips – the restaurants and shops you love. Find the right food
+            and groceries to suit your mood, and make the first bite last. Go ahead, download us.
+          </p>
+        </div>
+
+        <!-- App Store Buttons -->
+        <div class="flex flex-wrap gap-3 mt-4">
+          <a href="#" class="bg-black text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:opacity-80 transition">
+            <img src="Images/app store logo.png" alt="Apple" class="w-5 h-5" />
+            <span class="text-sm font-medium">Download on<br>App Store</span>
+          </a>
+          <a href="#" class="bg-black text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:opacity-80 transition">
+            <img src="Images/google play logo.jpg" alt="Google Play" class="w-5 h-5" />
+            <span class="text-sm font-medium">Get it on<br>Google Play</span>
+          </a>
+          <a href="#" class="bg-black text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:opacity-80 transition">
+            <img src="Images/app gallery logo.png" alt="AppGallery" class="w-5 h-5" />
+            <span class="text-sm font-medium">Explore it on<br>AppGallery</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Image -->
+      <div class="md:w-1/2 w-full mt-10 md:mt-0 flex justify-center md:justify-end">
+        <img src="home-foodpanda-apps.png_width=2000&height=1590.png" alt="App Screenshot" class="w-[250px] sm:w-[300px] md:w-[400px] object-contain">
+      </div>
+    </div>
+  </section>
+  <!-- FAQ Section -->
+  <section class="bg-white px-6 md:px-20 py-16 text-gray-800 mb-20">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-xl md:text-2xl font-semibold mb-6">
+        Order food and groceries online from the best restaurants and shops on foodpanda
+      </h2>
+      <h3 class="text-lg md:text-xl font-semibold mb-4">What’s new?</h3>
+      <ul class="space-y-3 text-sm md:text-base">
+        <li><strong>Frequently Asked Questions</strong></li>
+        <li>Can I pay cash for foodpanda?</li>
+        <li>How can I track my delivery?</li>
+        <li>Can I order foodpanda for someone else?</li>
+        <li>Does foodpanda deliver 24/7?</li>
+        <li>What restaurants are near me?</li>
+        <li>What is the difference between delivery and self-pickup?</li>
+        <li>Does foodpanda have minimum order?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 text-sm text-gray-600 px-6 md:px-20 py-12">
+    <!-- Top Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 mb-12 text-xs">
+      <div>
+        <h4 class="font-semibold mb-2">Laos</h4>
+        <ul><li><a href="#" class="hover:underline">foodpanda.la</a></li></ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Cambodia</h4>
+        <ul><li><a href="#" class="hover:underline">foodpanda.com.kh</a></li></ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Myanmar</h4>
+        <ul><li><a href="#" class="hover:underline">foodpanda.com.mm</a></li></ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Pakistan</h4>
+        <ul><li><a href="#" class="hover:underline">foodpanda.pk</a></li></ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Philippines</h4>
+        <ul><li><a href="#" class="hover:underline">foodpanda.ph</a></li></ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Singapore</h4>
+        <ul><li><a href="#" class="hover:underline">foodpanda.sg</a></li></ul>
+      </div>
+    </div>
+
+    <!-- Middle Links -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+      <div>
+        <h4 class="font-semibold mb-2">foodpanda</h4>
+        <ul class="space-y-1">
+          <li><a href="#" class="hover:underline">Press</a></li>
+          <li><a href="#" class="hover:underline">Careers</a></li>
+          <li><a href="#" class="hover:underline">Team</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Help</h4>
+        <ul class="space-y-1">
+          <li><a href="#" class="hover:underline">FAQs</a></li>
+          <li><a href="#" class="hover:underline">Support</a></li>
+          <li><a href="#" class="hover:underline">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Legal</h4>
+        <ul class="space-y-1">
+          <li><a href="#" class="hover:underline">Privacy Policy</a></li>
+          <li><a href="#" class="hover:underline">Terms</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-2">Follow us</h4>
+        <ul class="space-y-1">
+          <li><a href="#" class="hover:underline">Facebook</a></li>
+          <li><a href="#" class="hover:underline">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="border-t border-gray-300 pt-6 flex flex-col md:flex-row items-center justify-between">
+      <p class="text-xs">&copy; 2025 foodpanda</p>
+      <div class="flex space-x-4 mt-2 md:mt-0">
+        <img src="Images/foodpadna logo.png" alt="Foodpanda" class="h-5" />
+        <img src="Images/delivery hero.png" alt="DeliveryHero" class="h-5" />
+      </div>
+    </div>
+  </footer>
+
+
+ <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCartCount();
+      renderCartItems();
+    });
+
+    function toggleCartDropdown() {
+      document.getElementById("cart-dropdown").classList.toggle("hidden");
+      renderCartItems();
+    }
+
+    function updateCartCount() {
+      const items = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      const cartCountEl = document.getElementById("cart-count");
+      cartCountEl.textContent = items.length;
+      cartCountEl.classList.toggle("hidden", items.length === 0);
+    }
+
+    function renderCartItems() {
+      const list = document.getElementById("cart-items-list");
+      const items = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      if (items.length === 0) {
+        list.innerHTML = '<p class="text-center text-gray-500">Your cart is empty.</p>';
+      } else {
+        list.innerHTML = items.map((item, i) => `
+          <div class="flex justify-between items-center border-b py-2">
+            <span class="text-gray-800">${item.name}</span>
+            <button onclick="removeItem(${i})" class="text-xs text-red-500 hover:underline">Remove</button>
+          </div>
+        `).join('');
+      }
+      updateCartCount();
+    }
+
+    function addToCart(name, price) {
+      let items = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      items.push({ name, price });
+      localStorage.setItem("cartItems", JSON.stringify(items));
+      renderCartItems();
+      alert(name + " added to cart!");
+    }
+
+    function removeItem(i) {
+      let items = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      items.splice(i, 1);
+      localStorage.setItem("cartItems", JSON.stringify(items));
+      renderCartItems();
+    }
+
+    function clearCart() {
+      localStorage.removeItem("cartItems");
+      renderCartItems();
+    }
+
+    function placeOrder() {
+      const items = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      if (items.length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+      alert("Your order has been placed successfully!");
+      clearCart();
+    }
+
+    function addLocation() {
+      const loc = prompt("Enter your delivery location:");
+      if (loc) alert("Delivery location set to: " + loc);
+    }
+
+    function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.toggle("hidden");
+        modal.classList.toggle("flex");
+      }
+    }
+
+    document.getElementById("menu-toggle").addEventListener("click", () => {
+      document.getElementById("menu").classList.toggle("hidden");
+    });
+  </script>
+
+</body>
+</html>
